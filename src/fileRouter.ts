@@ -12,6 +12,8 @@ type router = { [index: string]: API };
  * @returns {structure[]} Builds a structure object which contains file names and directories
  */
 function getFDir(dir: string): structure[] {
+	if (!fs.existsSync(dir)) return [];
+
 	const files = fs.readdirSync(dir, {
 		withFileTypes: true,
 		encoding: 'utf8',
