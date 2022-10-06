@@ -1,38 +1,29 @@
 import { Request, Response, NextFunction } from 'express';
 
-enum RT {
-	get = 'get',
-	head = 'head',
-	post = 'post',
-	put = 'put',
-	delete = 'delete',
-	connect = 'connect',
-	options = 'options',
-	trace = 'trace',
-	patch = 'patch',
-	use = 'use',
-}
-const rt = Object.keys(RT) as Array<keyof typeof RT>;
-
 type Handler = {
 	type: string;
 	path: string;
 	fn: (req: Request, res: Response, next?: NextFunction) => void | any;
 };
 
+type HandlerFN = (
+	path: string,
+	handler: (req: Request, res: Response, next?: NextFunction) => void | any
+) => any;
+
 class API {
-	[property: string]:
-		| ((
-				path: string,
-				handler: (
-					req: Request,
-					res: Response,
-					next?: NextFunction
-				) => void | any
-		  ) => any)
-		| undefined
-		| Handler[];
 	handlers: Handler[] = [];
+
+	get: HandlerFN = this.newHandler('get');
+	head: HandlerFN = this.newHandler('head');
+	post: HandlerFN = this.newHandler('post');
+	put: HandlerFN = this.newHandler('put');
+	delete: HandlerFN = this.newHandler('delete');
+	connect: HandlerFN = this.newHandler('connect');
+	options: HandlerFN = this.newHandler('options');
+	trace: HandlerFN = this.newHandler('trace');
+	patch: HandlerFN = this.newHandler('patch');
+	use: HandlerFN = this.newHandler('use');
 
 	newHandler(type: string) {
 		return (
@@ -47,11 +38,7 @@ class API {
 		};
 	}
 
-	constructor() {
-		rt.forEach((type) => {
-			this[type] = this.newHandler(type);
-		});
-	}
+	constructor() {}
 }
 
 export type { Handler };

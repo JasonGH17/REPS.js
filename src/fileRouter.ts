@@ -45,18 +45,14 @@ async function createRouters(f: structure[], bp: string = '') {
 	await f.forEach(async (file: structure) => {
 		const baseRoute = Object.keys(file)[0];
 		const modulePath = Object.values(file)[0];
-
+		const fname = baseRoute.split('.')[0];
 		if (typeof modulePath === 'string')
 			routers.push({
-				[bp + '/' + baseRoute.split('.')[0]]: await import(modulePath),
+				[bp + '/' + (fname === 'index' ? '' : fname)]: await import(
+					modulePath
+				),
 			});
-		else
-			routers.push(
-				...(await createRouters(
-					modulePath,
-					'/' + baseRoute.split('.')[0]
-				))
-			);
+		else routers.push(...(await createRouters(modulePath, '/' + fname)));
 	});
 
 	return routers;
